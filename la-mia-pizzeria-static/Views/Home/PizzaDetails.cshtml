@@ -1,0 +1,29 @@
+﻿@using la_mia_pizzeria_static.Models.FormModel
+@model PizzaFormModel
+
+<div class="card h-75">
+    <img src="@Model.Pizza.Thumbnail" class="card-img-top h-50" alt="...">
+    <div class="c">
+        <h5 class="card-title">@Model.Pizza.Name</h5>
+        <p class="card-text">@Model.Pizza.Description</p>
+    </div>
+    <section class="pt-3" id="ingredients">
+        <h4>Ingredient:</h4>
+        @if(Model.Pizza.Ingredients != null && Model.Pizza.Ingredients.Count > 0)
+        {
+            <div class="container">
+                <div class="row gap-2">
+            
+                    @foreach (var item in Model.Pizza.Ingredients)
+                    {
+                        <span class="col badge rounded-pill text-bg-warning">@item.Name</span>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <span>Nessun ingrediente presente!</span>
+        }
+    </section>
+</div>

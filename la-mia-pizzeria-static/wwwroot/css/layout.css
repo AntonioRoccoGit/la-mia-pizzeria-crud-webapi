@@ -1,0 +1,35 @@
+﻿body {
+    height: 100vh;
+    width: 100%;
+}
+
+header{
+    height: var(--header-height);
+}
+
+.ms_navbar {
+    width: 100%;
+    height: var(--header-height);
+}
+
+
+
+footer {
+    height: var(--footer-height);
+    max-height: var(--footer-height)
+}
+
+.ms_main {
+    overflow-y: auto;
+    min-height: 600px;
+    flex-grow:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items: center;
+}
+
+:root {
+    --header-height: 80px;
+    --footer-height: 60px;
+}

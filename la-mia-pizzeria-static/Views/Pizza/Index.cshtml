@@ -1,0 +1,71 @@
+﻿@using la_mia_pizzeria_static.Models
+@model List<PizzaItem>
+@section LinkCss{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+}
+
+<div class="wrapper h-100 d-flex flex-column justify-content-around" >
+    <!-- CALL TO ACTION-->
+    <div class="d-flex justify-content-between">
+        <h4 class=""> Inserici un nuovo prodotto </h4>
+        <a class="btn btn-success" asp-controller="Pizza" asp-action="Create">
+            <i class="fa-solid fa-plus"></i>
+        </a>
+    </div>
+    <!-- /CALL TO ACTION-->
+    
+    <!-- PIZZA TABLE-->
+    @if(Model.Count < 1)
+    {
+        <h4 class="text-center mb-4 text-warning" >Aggiungi un prodotto al tuo ristorante per visualizzarlo!</h4>
+    }
+    else
+    {
+    <table class="table table-striped align-middle text-center">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Nome</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Descrizione</th>
+                <th scope="col">Prezzo</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (PizzaItem item in Model)
+            {
+                <tr>
+                    <th scope="row">
+                        <div class="rounded-4" style="height: 8vh; aspect-ratio: 3/2; overflow:hidden">
+                            <img src="@item.Thumbnail" style="max-width:100%;min-height:100%;object-fit:cover">
+                        </div>
+                    </th>
+                    <td>@item.Name</td>
+                    <td>@(item.Category?.Name ?? "Nessuna categoria")</td>
+                    <td>@item.Description</td>
+                    <td>@item.GetStringPrice() €</td>
+                    <td>
+                        <div class="d-flex justify-content-evenly">
+                            <a asp-controller="Pizza" asp-action="PizzaDetails" asp-route-id="@item.PizzaItemId" class="h-100 btn btn-success">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            <a asp-controller="Pizza" asp-action="Edit" asp-route-id="@item.PizzaItemId" class="h-100 btn btn-warning">
+                                <i class="fa-solid fa-pencil"></i>
+                            </a>
+                            <form  asp-controller="Pizza" asp-action="Delete" asp-route-id="@item.PizzaItemId">
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-danger" type="submit">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+        <!-- /PIZZA TABLE-->
+    }
+</div>
