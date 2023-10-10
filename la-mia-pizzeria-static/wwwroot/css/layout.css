@@ -22,11 +22,6 @@ footer {
 .ms_main {
     overflow-y: auto;
     min-height: 600px;
-    flex-grow:1;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items: center;
 }
 
 :root {

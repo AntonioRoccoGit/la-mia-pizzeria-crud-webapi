@@ -10,7 +10,7 @@ namespace la_mia_pizzeria_static.Services
     public class EntityFrameworkRepository<T,D> : IRepository<T> where T : class where D : DbContext
     {
 
-        private readonly D _context;
+        public readonly D _context;
         private readonly DbSet<T> _dbSet;
 
         public EntityFrameworkRepository(D context)
@@ -22,7 +22,7 @@ namespace la_mia_pizzeria_static.Services
         {
             try
             {
-                _dbSet.Add(entity);
+                _context.Add(entity);
                 _context.SaveChanges();
                 return true;
             }
@@ -58,16 +58,8 @@ namespace la_mia_pizzeria_static.Services
 
         public bool Update(T entity)
         {
-            try
-            {
-                _context.Entry(entity).State = EntityState.Modified;
-                _context.SaveChanges();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+          
+            return true;
         }
     }
 }

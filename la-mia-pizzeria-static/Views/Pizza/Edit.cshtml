@@ -1,7 +1,7 @@
 ﻿@using la_mia_pizzeria_static.Models.FormModel
 @model PizzaFormModel
 
-<form class="w-25" asp-controller="Pizza" asp-action="Edit" asp-route-id="@Model.Pizza.PizzaItemId" method="post">
+<form class="w-25 mt-5 d-flex flex-column m-auto" asp-controller="Pizza" asp-action="Edit" asp-route-id="@Model.Pizza.PizzaItemId" method="post">
     @Html.AntiForgeryToken()
     <div>
         <!-- INPUT HIDDEN FOR ID -->

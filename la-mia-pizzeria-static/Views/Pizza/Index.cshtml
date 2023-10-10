@@ -47,7 +47,7 @@
                     <td>@item.GetStringPrice() €</td>
                     <td>
                         <div class="d-flex justify-content-evenly">
-                            <a asp-controller="Pizza" asp-action="PizzaDetails" asp-route-id="@item.PizzaItemId" class="h-100 btn btn-success">
+                            <a asp-controller="Home" asp-action="PizzaDetails" asp-route-id="@item.PizzaItemId" class="h-100 btn btn-success">
                                 <i class="fa-solid fa-eye"></i>
                             </a>
                             <a asp-controller="Pizza" asp-action="Edit" asp-route-id="@item.PizzaItemId" class="h-100 btn btn-warning">

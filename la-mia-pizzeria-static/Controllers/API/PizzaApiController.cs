@@ -6,17 +6,19 @@ using la_mia_pizzeria_static.Models.FormModel;
 using la_mia_pizzeria_static.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace la_mia_pizzeria_static.Controllers.API
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class PizzaController : ControllerBase
+    public class PizzaApiController : ControllerBase
     {
         private readonly IRepository<PizzaItem> _efRepo;
 
-        public PizzaController(IRepository<PizzaItem> efRepo)
+        public PizzaApiController(IRepository<PizzaItem> efRepo)
         {
             _efRepo = efRepo;
         }
@@ -95,46 +97,74 @@ namespace la_mia_pizzeria_static.Controllers.API
 
         }
 
-        [HttpPost]
-        public IActionResult Post([FromBody] PizzaItem item)
+        [HttpPost, ActionName("Create")]
+        public IActionResult Post([FromBody] PizzaFormModel form)
         {
             ApiModel model = new();
-            model.Success = _efRepo.Add(item);
-            if (!model.Success)
+            if (form.IngredientsId.Count() < 0)
                 return UnprocessableEntity();
 
-            return Ok(model.Success);
+            form.Pizza.Ingredients = new();
+            using (PizzaContext db = new())
+            {
+
+                foreach (var id in form.IngredientsId)
+                {
+                    Ingredient toAdd = ((EntityFrameworkRepository<PizzaItem, PizzaContext>)_efRepo)._context.Ingredients.Find(id);
+                    if (toAdd != null)
+                        form.Pizza.Ingredients.Add(toAdd);
+                }
+
+                if (_efRepo.Add(form.Pizza))
+                    return Ok();
+
+                return BadRequest();
+
+            }
+
+
+
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), ActionName("Edit")]
         public IActionResult Put(int id, [FromBody] PizzaFormModel model)
         {
             model.Pizza.PizzaItemId = id;
 
-            if (model.IngredientsId?.Count() > 0)
+            model.Pizza.Ingredients = new();
+            using (PizzaContext db = new())
             {
-                model.Pizza.Ingredients = new();
-                using (PizzaContext db = new())
+                PizzaItem pizzaToUpdate = db.Pizzas.Include(p => p.Ingredients).FirstOrDefault(p => p.PizzaItemId == id);
+
+                if (pizzaToUpdate == null)
+                    return BadRequest();
+
+
+                if (model.IngredientsId?.Count() > 0)
                 {
+                    pizzaToUpdate.Ingredients?.Clear();
                     foreach (var ingredient in model.IngredientsId)
                     {
                         Ingredient toAdd = db.Ingredients.Find(ingredient);
                         if (toAdd != null)
-                            model.Pizza.Ingredients.Add(toAdd);
+                            pizzaToUpdate.Ingredients.Add(toAdd);
                     }
+
                 }
-            }
-            try
-            {
-                _efRepo.Update(model.Pizza);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
 
+                try
+                {
+                    EntityEntry<PizzaItem> updatePizza = db.Entry(pizzaToUpdate);
+                    updatePizza.CurrentValues.SetValues(model.Pizza);
+                    db.SaveChanges();
+                    return Ok();
+                }
+                catch
+                {
+                    return BadRequest();
+                }
 
+            }
 
         }
     }
