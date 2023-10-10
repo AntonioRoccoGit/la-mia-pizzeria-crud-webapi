@@ -4,6 +4,7 @@ using la_mia_pizzeria_static.Models;
 using la_mia_pizzeria_static.Models.API;
 using la_mia_pizzeria_static.Models.FormModel;
 using la_mia_pizzeria_static.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

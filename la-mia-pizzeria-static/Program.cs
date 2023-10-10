@@ -1,3 +1,4 @@
+using Azure;
 using la_mia_pizzeria_static.Database;
 using la_mia_pizzeria_static.Interface;
 using la_mia_pizzeria_static.Models;
@@ -13,6 +14,18 @@ namespace la_mia_pizzeria_static
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var allowedOrigin = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+
+            // Add services to the container.
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("myAppCors", policy =>
+                {
+                    policy.WithOrigins(allowedOrigin)
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                });
+            });
             //rimuovere?
             //var connectionString = builder.Configuration.GetConnectionString("PizzaContextConnection") ?? throw new InvalidOperationException("Connection string 'PizzaContextConnection' not found.");
 
@@ -34,7 +47,6 @@ namespace la_mia_pizzeria_static
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -43,7 +55,7 @@ namespace la_mia_pizzeria_static
             app.UseAuthentication();
 
             app.UseAuthorization();
-
+            app.UseCors("myAppCors");
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}"
